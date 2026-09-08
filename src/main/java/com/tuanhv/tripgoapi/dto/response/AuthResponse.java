@@ -1,0 +1,7 @@
+package com.tuanhv.tripgoapi.dto.response;
+
+public record AuthResponse(
+        String token,
+        UserResponse user
+) {
+}
