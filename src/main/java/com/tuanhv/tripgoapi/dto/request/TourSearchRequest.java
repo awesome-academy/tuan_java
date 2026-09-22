@@ -1,10 +1,7 @@
 package com.tuanhv.tripgoapi.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.DecimalMax;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -101,6 +98,7 @@ public class TourSearchRequest {
             value = 1,
             message = "page must be greater than or equal to 1"
     )
+    @NotNull
     private Integer page = 1;
 
     @Schema(
@@ -115,5 +113,6 @@ public class TourSearchRequest {
             value = 100,
             message = "limit must be less than or equal to 100"
     )
+    @NotNull
     private Integer limit = 12;
 }

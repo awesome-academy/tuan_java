@@ -7,18 +7,20 @@ import com.tuanhv.tripgoapi.dto.response.UserResponse;
 import com.tuanhv.tripgoapi.entity.User;
 import com.tuanhv.tripgoapi.enums.Role;
 import com.tuanhv.tripgoapi.exception.BadRequestException;
+import com.tuanhv.tripgoapi.exception.ConflictException;
 import com.tuanhv.tripgoapi.exception.InvalidCredentialsException;
 import com.tuanhv.tripgoapi.exception.ResourceNotFoundException;
 import com.tuanhv.tripgoapi.mapper.UserMapper;
 import com.tuanhv.tripgoapi.repository.UserRepository;
+import com.tuanhv.tripgoapi.security.CurrentUserProvider;
 import com.tuanhv.tripgoapi.service.AuthService;
 import com.tuanhv.tripgoapi.service.JwtService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +31,7 @@ import java.util.Locale;
 @Transactional
 public class AuthServiceImpl implements AuthService {
 
+    private final CurrentUserProvider currentUserProvider;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
@@ -41,7 +44,7 @@ public class AuthServiceImpl implements AuthService {
         String email = normalizeEmail(request.email());
 
         if (userRepository.existsByEmail(email)) {
-            throw new BadRequestException(
+            throw new ConflictException(
                     "EMAIL_ALREADY_EXISTS",
                     "Email đã được sử dụng"
             );
@@ -55,9 +58,16 @@ public class AuthServiceImpl implements AuthService {
                 Role.USER
         );
 
-        User saved = userRepository.save(user);
+        try {
+            User saved = userRepository.saveAndFlush(user);
 
-        return userMapper.toResponse(saved);
+            return userMapper.toResponse(saved);
+        } catch (DataIntegrityViolationException ex) {
+            throw new ConflictException(
+                    "EMAIL_ALREADY_EXISTS",
+                    "Email đã được sử dụng"
+            );
+        }
     }
 
     @Transactional(readOnly = true)
@@ -87,8 +97,8 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public UserResponse getCurrentUser(Jwt jwt) {
-        Long userId = jwt.getClaim("userId");
+    public UserResponse getCurrentUser() {
+        Long userId = currentUserProvider.getUserId();
 
         if (userId == null) {
             throw new ResourceNotFoundException(

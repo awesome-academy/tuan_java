@@ -8,13 +8,15 @@ spring:
     password: ${DB_PASSWORD}
 
   flyway:
-    enable: true
+    enabled: true
 
   jpa:
     show-sql: true
     hibernate:
-      format_sql: true
       ddl-auto: validate
+      properties:
+        hibernate:
+          format_sql: true
 
 app:
   jwt:

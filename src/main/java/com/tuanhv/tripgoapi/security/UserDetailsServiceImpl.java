@@ -1,4 +1,4 @@
-package com.tuanhv.tripgoapi.service.impl;
+package com.tuanhv.tripgoapi.security;
 
 import com.tuanhv.tripgoapi.entity.User;
 import com.tuanhv.tripgoapi.repository.UserRepository;

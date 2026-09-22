@@ -116,10 +116,8 @@ public class AuthController {
                     description = "JWT thiếu, sai hoặc hết hạn"
             )
     })
-    public UserResponse me(
-            @AuthenticationPrincipal Jwt jwt
-    ) {
-        return authService.getCurrentUser(jwt);
+    public UserResponse me() {
+        return authService.getCurrentUser();
     }
 
 }

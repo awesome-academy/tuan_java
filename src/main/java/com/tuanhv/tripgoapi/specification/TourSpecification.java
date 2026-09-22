@@ -2,6 +2,10 @@ package com.tuanhv.tripgoapi.specification;
 
 import com.tuanhv.tripgoapi.dto.request.TourSearchRequest;
 import com.tuanhv.tripgoapi.entity.Tour;
+import com.tuanhv.tripgoapi.exception.BadRequestException;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.Expression;
+import jakarta.persistence.criteria.Root;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
@@ -19,7 +23,8 @@ public final class TourSpecification {
                 .and(minPrice(request.getMinPrice()))
                 .and(maxPrice(request.getMaxPrice()))
                 .and(duration(request.getDuration()))
-                .and(minRating(request.getRating()));
+                .and(minRating(request.getRating()))
+                .and(sort(request.getSort()));
     }
 
     private static Specification<Tour> isFeatured(Boolean isFeatured) {
@@ -43,19 +48,29 @@ public final class TourSpecification {
                 return null;
             }
 
-            String keyword = "%" + q.trim().toLowerCase() + "%";
+            String escaped = escapeLike(q.trim().toLowerCase());
+            String pattern = "%" + escaped + "%";
 
             return cb.or(
                     cb.like(
                             cb.lower(root.get("title")),
-                            keyword
+                            pattern,
+                            '\\'
                     ),
                     cb.like(
                             cb.lower(root.get("description")),
-                            keyword
+                            pattern,
+                            '\\'
                     )
             );
         };
+    }
+
+    private static String escapeLike(String value) {
+        return value
+                .replace("\\", "\\\\")
+                .replace("%", "\\%")
+                .replace("_", "\\_");
     }
 
     private static Specification<Tour> destination(String slug) {
@@ -94,7 +109,7 @@ public final class TourSpecification {
             }
 
             return cb.greaterThanOrEqualTo(
-                    root.get("price"),
+                    effectivePrice(root, cb),
                     minPrice
             );
         };
@@ -108,10 +123,20 @@ public final class TourSpecification {
             }
 
             return cb.lessThanOrEqualTo(
-                    root.get("price"),
+                    effectivePrice(root, cb),
                     maxPrice
             );
         };
+    }
+
+    private static Expression<BigDecimal> effectivePrice(
+            Root<Tour> root,
+            CriteriaBuilder cb
+    ) {
+        return cb.coalesce(
+                root.get("discountPrice"),
+                root.get("price")
+        );
     }
 
     private static Specification<Tour> duration(Integer duration) {
@@ -139,6 +164,56 @@ public final class TourSpecification {
                     root.get("rating"),
                     rating
             );
+        };
+    }
+
+    private static Specification<Tour> sort(String sort) {
+        return (root, query, cb) -> {
+
+            if (sort == null || sort.isBlank()) {
+                return null;
+            }
+
+            // Tránh áp ORDER BY vào count query của pagination
+            if (Long.class.equals(query.getResultType())
+                    || long.class.equals(query.getResultType())) {
+                return null;
+            }
+
+            switch (sort) {
+                case "price_asc" ->
+                        query.orderBy(
+                                cb.asc(
+                                        effectivePrice(root, cb)
+                                )
+                        );
+
+                case "price_desc" ->
+                        query.orderBy(
+                                cb.desc(
+                                        effectivePrice(root, cb)
+                                )
+                        );
+
+                case "rating" ->
+                        query.orderBy(
+                                cb.desc(root.get("rating")),
+                                cb.desc(root.get("reviewCount"))
+                        );
+
+                case "newest" ->
+                        query.orderBy(
+                                cb.desc(root.get("createdAt"))
+                        );
+
+                default ->
+                        throw new BadRequestException(
+                                "INVALID_SORT",
+                                "Unsupported sort: " + sort
+                        );
+            }
+
+            return null;
         };
     }
 }

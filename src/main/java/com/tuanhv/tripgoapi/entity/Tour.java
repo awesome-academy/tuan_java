@@ -38,7 +38,11 @@ public class Tour {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;    // beach|mountain|city|trekking|cruise
 
-    @Column(precision = 19, scale = 2)
+    @Column(
+            nullable = false,
+            precision = 19,
+            scale = 2
+    )
     private BigDecimal price;
 
     @Column(precision = 19, scale = 2)

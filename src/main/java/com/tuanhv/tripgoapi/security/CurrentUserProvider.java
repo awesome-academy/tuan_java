@@ -1,5 +1,6 @@
 package com.tuanhv.tripgoapi.security;
 
+import com.tuanhv.tripgoapi.exception.UnauthorizedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -18,8 +19,9 @@ public class CurrentUserProvider {
         Number userId = jwt.getClaim("userId");
 
         if (userId == null) {
-            throw new IllegalStateException(
-                    "JWT is missing required claim: userId"
+            throw new UnauthorizedException(
+                    "INVALID_TOKEN",
+                    "Token không hợp lệ"
             );
         }
 
@@ -36,8 +38,9 @@ public class CurrentUserProvider {
         if (authentication == null
                 || !authentication.isAuthenticated()
                 || !(authentication.getPrincipal() instanceof Jwt jwt)) {
-            throw new IllegalStateException(
-                    "Authenticated JWT principal is required"
+            throw new UnauthorizedException(
+                    "UNAUTHORIZED",
+                    "Yêu cầu xác thực"
             );
         }
 

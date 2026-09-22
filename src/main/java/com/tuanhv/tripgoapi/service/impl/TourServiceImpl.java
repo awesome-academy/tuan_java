@@ -20,7 +20,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,12 +44,9 @@ public class TourServiceImpl implements TourService {
 
         Specification<Tour> specification = TourSpecification.search(request);
 
-        Sort sort = resolveSort(request.getSort());
-
         Pageable pageable = PageRequest.of(
                 request.getPage() - 1,
-                request.getLimit(),
-                sort
+                request.getLimit()
         );
 
         Page<Tour> result = tourRepository.findAll(specification, pageable);
@@ -136,32 +132,6 @@ public class TourServiceImpl implements TourService {
                     "minPrice must not be greater than maxPrice"
             );
         }
-    }
-
-    private Sort resolveSort(String sort) {
-        return switch (sort) {
-
-            case "price_asc" ->
-                    Sort.by("price").ascending();
-
-            case "price_desc" ->
-                    Sort.by("price").descending();
-
-            case "rating" ->
-                    Sort.by(
-                            Sort.Order.desc("rating"),
-                            Sort.Order.desc("reviewCount")
-                    );
-
-            case "newest" ->
-                    Sort.by("createdAt").descending();
-
-            default ->
-                    throw new BadRequestException(
-                            "INVALID_SORT",
-                            "Unsupported sort: " + sort
-                    );
-        };
     }
 
     private YearMonth parseMonth(String month) {

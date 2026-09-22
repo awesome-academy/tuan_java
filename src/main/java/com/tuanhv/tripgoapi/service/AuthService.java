@@ -12,5 +12,5 @@ public interface AuthService {
 
     AuthResponse login(LoginRequest request);
 
-    UserResponse getCurrentUser(Jwt jwt);
+    UserResponse getCurrentUser();
 }

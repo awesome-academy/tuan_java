@@ -20,7 +20,11 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
+    @Column(
+            nullable = false,
+            unique = true,
+            length = 32
+    )
     private String code;    // "TG-2026-000123"
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

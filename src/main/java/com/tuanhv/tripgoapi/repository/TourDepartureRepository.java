@@ -52,6 +52,7 @@ public interface TourDepartureRepository extends JpaRepository<TourDeparture, Lo
             ON b.tourDeparture = td
 
         WHERE t.slug = :slug
+          AND td.startDate >= CURRENT_DATE
           AND td.startDate >= :fromDate
           AND td.startDate < :toDate
 
@@ -75,7 +76,6 @@ public interface TourDepartureRepository extends JpaRepository<TourDeparture, Lo
     @Query("""
         SELECT td
         FROM TourDeparture td
-        JOIN FETCH td.tour t
         WHERE td.id = :departureId
     """)
     Optional<TourDeparture> findByIdForUpdate(@Param("departureId") Long departureId);

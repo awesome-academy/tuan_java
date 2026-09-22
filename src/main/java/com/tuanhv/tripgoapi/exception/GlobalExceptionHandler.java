@@ -3,14 +3,18 @@ package com.tuanhv.tripgoapi.exception;
 import com.tuanhv.tripgoapi.dto.response.ErrorResponse;
 import com.tuanhv.tripgoapi.dto.response.ValidationErrorResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -19,7 +23,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @RestControllerAdvice
-public class GlobalExceptionHandler {
+public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<ErrorResponse> handleTypeMismatch(
@@ -37,19 +41,23 @@ public class GlobalExceptionHandler {
                 .body(response);
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ValidationErrorResponse> handleValidation(MethodArgumentNotValidException ex) {
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(
+            MethodArgumentNotValidException ex,
+            HttpHeaders headers,
+            HttpStatusCode status,
+            WebRequest request
+    ) {
         Map<String, String> fields = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
                 .collect(
                         Collectors.toMap(
                                 FieldError::getField,
-                                fieldError ->
-                                        Objects.requireNonNullElse(
-                                                fieldError.getDefaultMessage(),
-                                                "Giá trị không hợp lệ"
-                                        ),
+                                error -> Objects.requireNonNullElse(
+                                        error.getDefaultMessage(),
+                                        "Giá trị không hợp lệ"
+                                ),
                                 (first, second) -> first,
                                 LinkedHashMap::new
                         )
@@ -100,24 +108,6 @@ public class GlobalExceptionHandler {
                 .body(response);
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleUnexpected(
-            Exception ex
-    ) {
-        log.error("Unhandled exception", ex);
-
-        ErrorResponse response = new ErrorResponse(
-                new ErrorResponse.ErrorDetail(
-                        "INTERNAL_SERVER_ERROR",
-                        "An unexpected error occurred"
-                )
-        );
-
-        return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(response);
-    }
-
     @ExceptionHandler(InvalidCredentialsException.class)
     public ResponseEntity<ErrorResponse> handleInvalidCredentials(InvalidCredentialsException ex) {
         ErrorResponse response = new ErrorResponse(
@@ -132,8 +122,26 @@ public class GlobalExceptionHandler {
                 .body(response);
     }
 
-    @ExceptionHandler(BookingConflictException.class)
-    public ResponseEntity<ErrorResponse> handleBookingConflict(BookingConflictException ex) {
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponse> handleDataIntegrityViolation(
+            DataIntegrityViolationException ex
+    ) {
+        log.warn("Database constraint violation", ex);
+
+        ErrorResponse response = new ErrorResponse(
+                new ErrorResponse.ErrorDetail(
+                        "DATA_CONFLICT",
+                        "Dữ liệu xung đột với trạng thái hiện tại"
+                )
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(response);
+    }
+
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<ErrorResponse> handleConflict(ConflictException ex) {
         ErrorResponse response = new ErrorResponse(
                 new ErrorResponse.ErrorDetail(
                         ex.getCode(),
@@ -157,6 +165,20 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity
                 .status(HttpStatus.FORBIDDEN)
+                .body(response);
+    }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<ErrorResponse> handleUnauthorized(UnauthorizedException ex) {
+        ErrorResponse response = new ErrorResponse(
+                new ErrorResponse.ErrorDetail(
+                        ex.getCode(),
+                        ex.getMessage()
+                )
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
                 .body(response);
     }
 }

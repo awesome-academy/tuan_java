@@ -81,11 +81,8 @@ public class TourController {
     @Operation(
             summary = "Kiểm tra lịch khởi hành và số chỗ",
             description = """
-                Nếu truyền month theo định dạng yyyy-MM,
-                chỉ trả departure trong tháng đó.
-        
-                Nếu không truyền month,
-                trả tất cả departure phù hợp trong tương lai.
+                Truyền month theo định dạng yyyy-MM,
+                chỉ trả departure trong tháng đó
                 """
     )
     @ApiResponses({

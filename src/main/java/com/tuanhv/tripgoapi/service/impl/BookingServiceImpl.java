@@ -9,10 +9,8 @@ import com.tuanhv.tripgoapi.entity.Tour;
 import com.tuanhv.tripgoapi.entity.TourDeparture;
 import com.tuanhv.tripgoapi.entity.User;
 import com.tuanhv.tripgoapi.enums.BookingStatus;
-import com.tuanhv.tripgoapi.exception.BadRequestException;
-import com.tuanhv.tripgoapi.exception.BookingConflictException;
-import com.tuanhv.tripgoapi.exception.ForbiddenException;
-import com.tuanhv.tripgoapi.exception.ResourceNotFoundException;
+import com.tuanhv.tripgoapi.exception.*;
+import com.tuanhv.tripgoapi.generator.BookingCodeGenerator;
 import com.tuanhv.tripgoapi.mapper.BookingMapper;
 import com.tuanhv.tripgoapi.repository.BookingRepository;
 import com.tuanhv.tripgoapi.repository.TourDepartureRepository;
@@ -21,12 +19,12 @@ import com.tuanhv.tripgoapi.security.CurrentUserProvider;
 import com.tuanhv.tripgoapi.service.BookingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.Year;
 import java.util.List;
 import java.util.Locale;
 
@@ -39,19 +37,12 @@ public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
     private final UserRepository userRepository;
     private final BookingMapper bookingMapper;
+    private final BookingCodeGenerator bookingCodeGenerator;
 
-    @Transactional
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     @Override
     public BookingResponse create(CreateBookingRequest request) {
         Long userId = currentUserProvider.getUserId();
-
-        User user = userRepository.findById(userId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "NOT_FOUND",
-                                "Không tìm thấy người dùng"
-                        )
-                );
 
         TourDeparture departure = tourDepartureRepository
                 .findByIdForUpdate(request.departureId())
@@ -62,14 +53,24 @@ public class BookingServiceImpl implements BookingService {
                         )
                 );
 
+        User user = userRepository.findById(userId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "NOT_FOUND",
+                                "Không tìm thấy người dùng"
+                        )
+                );
+
+        Tour tour = departure.getTour();
+
         validateDepartureDate(departure);
 
         int requestedSeats = request.adults() + request.children();
         long bookedSeats = bookingRepository.sumBookedSeats(departure.getId());
-        int availableSeats = departure.getTour().getMaxGroupSize() - Math.toIntExact(bookedSeats);
+        int availableSeats = tour.getMaxGroupSize() - Math.toIntExact(bookedSeats);
 
         if (requestedSeats > availableSeats) {
-            throw new BookingConflictException(
+            throw new ConflictException(
                     "NOT_ENOUGH_SLOTS",
                     "Không còn đủ chỗ cho số lượng khách đã chọn"
             );
@@ -79,6 +80,7 @@ public class BookingServiceImpl implements BookingService {
         BigDecimal totalPrice = unitPrice.multiply(BigDecimal.valueOf(requestedSeats));
 
         Booking booking = new Booking();
+        booking.setCode(bookingCodeGenerator.generate());
         booking.setTourDeparture(departure);
         booking.setUser(user);
         booking.setAdults(request.adults());
@@ -95,7 +97,6 @@ public class BookingServiceImpl implements BookingService {
         booking.setCreatedAt(Instant.now());
 
         Booking saved = bookingRepository.save(booking);
-        saved.setCode(generateBookingCode(saved.getId()));
 
         return bookingMapper.toResponse(saved);
     }
@@ -165,7 +166,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     private void validateDepartureDate(TourDeparture departure) {
-        if (departure.getStartDate().isBefore(LocalDate.now())) {
+        if (!departure.getStartDate().isAfter(LocalDate.now())) {
             throw new BadRequestException(
                     "INVALID_DEPARTURE_DATE",
                     "Ngày khởi hành không hợp lệ"
@@ -184,13 +185,12 @@ public class BookingServiceImpl implements BookingService {
             return tour.getDiscountPrice();
         }
 
-        return tour.getPrice();
-    }
+        if (tour.getPrice() != null) {
+            return tour.getPrice();
+        }
 
-    private String generateBookingCode(Long id) {
-        return "TG-%d-%06d".formatted(
-                Year.now().getValue(),
-                id
+        throw new IllegalStateException(
+                "No price configured for tour id=" + tour.getId()
         );
     }
 
@@ -213,14 +213,14 @@ public class BookingServiceImpl implements BookingService {
 
     private void validateCancelable(Booking booking) {
         if (booking.getStatus() == BookingStatus.CANCELLED) {
-            throw new BookingConflictException(
+            throw new ConflictException(
                     "BOOKING_ALREADY_CANCELLED",
                     "Đơn đặt tour đã được hủy"
             );
         }
 
         if (!booking.getTourDeparture().getStartDate().isAfter(LocalDate.now())) {
-            throw new BookingConflictException(
+            throw new ConflictException(
                     "BOOKING_CANNOT_BE_CANCELLED",
                     "Không thể hủy tour đã hoặc đang khởi hành"
             );

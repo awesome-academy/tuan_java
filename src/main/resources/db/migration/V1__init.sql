@@ -36,9 +36,9 @@ CREATE TABLE categories (
 CREATE TABLE users (
     id            BIGINT NOT NULL AUTO_INCREMENT,
     name          VARCHAR(255) NOT NULL,
-    email         VARCHAR(255),
-    password_hash VARCHAR(255),
-    role          ENUM ('ADMIN', 'USER'),
+    email         VARCHAR(255) NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    role          ENUM ('ADMIN', 'USER') NOT NULL,
 
     CONSTRAINT pk_users
         PRIMARY KEY (id),
@@ -62,7 +62,7 @@ CREATE TABLE tours (
     description     TEXT,
     thumbnail       VARCHAR(255),
 
-    price           DECIMAL(19, 2),
+    price           DECIMAL(19, 2) NOT NULL,
     discount_price  DECIMAL(19, 2),
 
     duration_days   INTEGER NOT NULL,
@@ -182,18 +182,18 @@ CREATE TABLE bookings (
     departure_id BIGINT NOT NULL,
     user_id      BIGINT NOT NULL,
 
-    code        VARCHAR(255),
-    full_name   VARCHAR(255),
-    email       VARCHAR(255),
-    phone       VARCHAR(255),
+    code        VARCHAR(32) NOT NULL,
+    full_name   VARCHAR(255) NOT NULL,
+    email       VARCHAR(255) NOT NULL,
+    phone       VARCHAR(255) NOT NULL,
 
     adults      INTEGER NOT NULL,
     children    INTEGER NOT NULL,
 
-    total_price DECIMAL(19, 2),
+    total_price DECIMAL(19, 2) NOT NULL,
 
-    status      ENUM ('CANCELLED', 'CONFIRMED', 'PENDING'),
-    created_at  DATETIME(6),
+    status      ENUM ('CANCELLED', 'CONFIRMED', 'PENDING') NOT NULL,
+    created_at  DATETIME(6) NOT NULL,
 
     CONSTRAINT pk_bookings
         PRIMARY KEY (id),

@@ -16,8 +16,6 @@ import java.util.Optional;
 
 public interface TourRepository extends JpaRepository<Tour, Long>, JpaSpecificationExecutor<Tour> {
 
-    Page<Tour> findByFeaturedTrue(Pageable pageable);
-
     boolean existsBySlug(String slug);
 
     @Override
