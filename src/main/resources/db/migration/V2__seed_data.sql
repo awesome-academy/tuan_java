@@ -1,4 +1,39 @@
 -- =========================================================
+-- Seed users
+-- Test password for all accounts: password
+-- =========================================================
+
+INSERT INTO users (id, name, email, password_hash, role) VALUES
+    (
+        1,
+        'TripGo Admin',
+        'admin@tripgo.com',
+        '$2a$10$1OnFPiwl945/Murm1A9SdOiwDtMcuolPf9yiDOsfPtWTPh6CFKUFy',
+        'ADMIN'
+    ),
+    (
+        2,
+        'Nguyen Van An',
+        'an@example.com',
+        '$2a$10$1OnFPiwl945/Murm1A9SdOiwDtMcuolPf9yiDOsfPtWTPh6CFKUFy',
+        'USER'
+    ),
+    (
+        3,
+        'Tran Thi Binh',
+        'binh@example.com',
+        '$2a$10$1OnFPiwl945/Murm1A9SdOiwDtMcuolPf9yiDOsfPtWTPh6CFKUFy',
+        'USER'
+    ),
+    (
+        4,
+        'Le Minh Chau',
+        'chau@example.com',
+        '$2a$10$1OnFPiwl945/Murm1A9SdOiwDtMcuolPf9yiDOsfPtWTPh6CFKUFy',
+        'USER'
+    );
+
+-- =========================================================
 -- Destinations
 -- =========================================================
 

@@ -4,16 +4,19 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "tours")
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Setter
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 public class Tour {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -62,14 +65,14 @@ public class Tour {
 
     @ElementCollection
     @CollectionTable(name = "tour_images")
-    private List<TourImage> images;
+    private List<TourImage> images = new ArrayList<>();
 
     @Column(columnDefinition = "text")
     private String description;
 
     @ElementCollection
     @CollectionTable(name = "tour_itineraries")
-    private List<TourItinerary> itineraries;
+    private List<TourItinerary> itineraries = new ArrayList<>();
 
     @OneToMany(mappedBy = "tour")
     private List<TourDeparture> departures;

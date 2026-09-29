@@ -3,11 +3,13 @@ package com.tuanhv.tripgoapi.repository;
 import com.tuanhv.tripgoapi.dto.response.DestinationResponse;
 import com.tuanhv.tripgoapi.entity.Destination;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface DestinationRepository extends JpaRepository<Destination, Long> {
+public interface DestinationRepository
+        extends JpaRepository<Destination, Long>, JpaSpecificationExecutor<Destination> {
 
     @Query("""
         SELECT new com.tuanhv.tripgoapi.dto.response.DestinationResponse(
@@ -23,5 +25,9 @@ public interface DestinationRepository extends JpaRepository<Destination, Long> 
         GROUP BY d.id
     """)
     List<DestinationResponse> findAllWithTourCount();
+
+    boolean existsBySlug(String slug);
+
+    boolean existsBySlugAndIdNot(String slug, Long id);
 
 }

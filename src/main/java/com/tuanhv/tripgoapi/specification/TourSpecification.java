@@ -14,6 +14,31 @@ public final class TourSpecification {
 
     private TourSpecification() {}
 
+    public static Specification<Tour> adminKeyword(String q) {
+        return (root, query, cb) -> {
+
+            if (q == null || q.isBlank()) {
+                return null;
+            }
+
+            String escaped = escapeLike(q.trim().toLowerCase());
+            String pattern = "%" + escaped + "%";
+
+            return cb.or(
+                    cb.like(
+                            cb.lower(root.get("title")),
+                            pattern,
+                            '\\'
+                    ),
+                    cb.like(
+                            cb.lower(root.get("slug")),
+                            pattern,
+                            '\\'
+                    )
+            );
+        };
+    }
+
     public static Specification<Tour> search(TourSearchRequest request) {
         return Specification
                 .where(keyword(request.getQ()))

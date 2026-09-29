@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html
+        lang="vi"
+        xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{admin/fragments/head :: head('TripGo Admin - Đăng nhập')}">
+</head>
+
+<body class="admin-login-page">
+
+<div class="admin-login-wrapper">
+
+    <div class="admin-login-card">
+
+        <h1 class="admin-login-title">
+            TripGo Admin
+        </h1>
+
+        <div
+                th:if="${param.error}"
+                class="alert alert-danger py-2">
+            Email hoặc mật khẩu không đúng,
+            hoặc tài khoản không có quyền quản trị.
+        </div>
+
+        <div
+                th:if="${param.logout}"
+                class="alert alert-success py-2">
+            Bạn đã đăng xuất.
+        </div>
+
+        <form
+                th:action="@{/admin/login}"
+                method="post">
+
+            <div class="mb-3">
+
+                <label
+                        for="email"
+                        class="form-label fw-semibold">
+                    Email
+                </label>
+
+                <input
+                        id="email"
+                        type="email"
+                        name="email"
+                        class="form-control admin-input"
+                        autocomplete="username"
+                        required>
+
+            </div>
+
+            <div class="mb-4">
+
+                <label
+                        for="password"
+                        class="form-label fw-semibold">
+                    Mật khẩu
+                </label>
+
+                <input
+                        id="password"
+                        type="password"
+                        name="password"
+                        class="form-control admin-input"
+                        autocomplete="current-password"
+                        required>
+
+            </div>
+
+            <button
+                    type="submit"
+                    class="btn admin-btn-primary w-100">
+                Đăng nhập
+            </button>
+
+        </form>
+
+    </div>
+
+    <p class="admin-login-note">
+        Chỉ tài khoản role = admin mới đăng nhập được
+    </p>
+
+</div>
+
+</body>
+</html>

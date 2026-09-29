@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<body>
+
+<header
+        th:fragment="topbar(title)"
+        class="admin-topbar">
+
+  <h1
+          class="admin-page-title"
+          th:text="${title}">
+    Dashboard
+  </h1>
+
+  <div class="admin-user">
+
+    <div class="admin-user-info">
+
+            <span
+                    class="admin-user-name"
+                    sec:authentication="name">
+                Admin
+            </span>
+
+      <i class="bi bi-chevron-down small"></i>
+
+    </div>
+
+    <div class="admin-avatar">
+      <i class="bi bi-person"></i>
+    </div>
+
+  </div>
+
+</header>
+
+</body>
+</html>

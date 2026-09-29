@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+
+<aside
+        th:fragment="sidebar(activePage)"
+        class="admin-sidebar">
+
+    <div class="admin-brand">
+        TripGo Admin
+    </div>
+
+    <nav class="admin-nav">
+
+        <a
+                th:href="@{/admin}"
+                class="admin-nav-link"
+                th:classappend="${activePage == 'dashboard'} ? ' active'">
+
+            <i class="bi bi-grid"></i>
+
+            <span>
+                Dashboard
+            </span>
+
+        </a>
+
+        <a
+                th:href="@{/admin/tours}"
+                class="admin-nav-link"
+                th:classappend="${activePage == 'tours'} ? ' active'">
+
+            <i class="bi bi-briefcase"></i>
+
+            <span>
+                Tour
+            </span>
+
+        </a>
+
+        <a
+                th:href="@{/admin/bookings}"
+                class="admin-nav-link"
+                th:classappend="${activePage == 'bookings'} ? ' active'">
+
+            <i class="bi bi-receipt"></i>
+
+            <span>
+                Đơn đặt
+            </span>
+
+        </a>
+
+        <a
+                th:href="@{/admin/destinations}"
+                class="admin-nav-link"
+                th:classappend="${activePage == 'destinations'} ? ' active'">
+
+            <i class="bi bi-geo-alt"></i>
+
+            <span>
+                Điểm đến
+            </span>
+
+        </a>
+
+        <form
+                th:action="@{/admin/logout}"
+                method="post">
+
+            <button
+                    type="submit"
+                    class="admin-nav-link admin-nav-button">
+
+                <i class="bi bi-box-arrow-right"></i>
+
+                <span>
+                    Đăng xuất
+                </span>
+
+            </button>
+
+        </form>
+
+    </nav>
+
+</aside>
+
+</body>
+</html>

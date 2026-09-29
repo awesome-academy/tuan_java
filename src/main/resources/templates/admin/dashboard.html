@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html
+        lang="vi"
+        xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{admin/fragments/head :: head('Dashboard - TripGo Admin')}">
+</head>
+
+<body>
+
+<div
+        th:replace="~{admin/fragments/sidebar :: sidebar('dashboard')}">
+</div>
+
+<main class="admin-main">
+
+  <div
+          th:replace="~{admin/fragments/topbar :: topbar('Dashboard')}">
+  </div>
+
+  <div class="admin-content">
+
+    <div
+            th:replace="~{admin/fragments/messages :: messages}">
+    </div>
+
+    <div class="row g-4">
+
+      <div class="col-md-6 col-xl-3">
+
+        <div class="dashboard-card">
+
+          <div class="dashboard-card-icon">
+            <i class="bi bi-briefcase"></i>
+          </div>
+
+          <div>
+
+            <div class="dashboard-card-label">
+              Tổng tour
+            </div>
+
+            <div
+                    class="dashboard-card-value"
+                    th:text="${dashboard.totalTours}">
+              0
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="col-md-6 col-xl-3">
+
+        <div class="dashboard-card">
+
+          <div class="dashboard-card-icon">
+            <i class="bi bi-receipt"></i>
+          </div>
+
+          <div>
+
+            <div class="dashboard-card-label">
+              Tổng đơn
+            </div>
+
+            <div
+                    class="dashboard-card-value"
+                    th:text="${dashboard.totalBookings}">
+              0
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="col-md-6 col-xl-3">
+
+        <div class="dashboard-card">
+
+          <div class="dashboard-card-icon">
+            <i class="bi bi-clock"></i>
+          </div>
+
+          <div>
+
+            <div class="dashboard-card-label">
+              Chờ xác nhận
+            </div>
+
+            <div
+                    class="dashboard-card-value"
+                    th:text="${dashboard.pendingBookings}">
+              0
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="col-md-6 col-xl-3">
+
+        <div class="dashboard-card">
+
+          <div class="dashboard-card-icon">
+            <i class="bi bi-cash-stack"></i>
+          </div>
+
+          <div>
+
+            <div class="dashboard-card-label">
+              Doanh thu
+            </div>
+
+            <div
+                    class="dashboard-card-value dashboard-money"
+                    th:text="${#numbers.formatDecimal(
+                                    dashboard.confirmedRevenue,
+                                    0,
+                                    'COMMA',
+                                    0,
+                                    'POINT'
+                                ) + 'đ'}">
+              0đ
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</main>
+
+<script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js">
+</script>
+
+</body>
+</html>
