@@ -14,6 +14,8 @@ import java.util.Optional;
 
 public interface TourDepartureRepository extends JpaRepository<TourDeparture, Long> {
 
+    boolean existsByTour_Id(Long tourId);
+
     @Query("""
         SELECT td
         FROM TourDeparture td

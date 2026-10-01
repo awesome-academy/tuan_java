@@ -1,11 +1,11 @@
 package com.tuanhv.tripgoapi.repository;
 
 import com.tuanhv.tripgoapi.entity.Category;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface CategoryRepository extends CrudRepository<Category, Long> {
+public interface CategoryRepository extends JpaRepository<Category, Long> {
 
     List<Category> findAllByOrderByNameAsc();
 }

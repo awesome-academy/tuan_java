@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html
+        lang="vi"
+        xmlns:th="http://www.thymeleaf.org">
+
+<head
+        th:replace="~{
+            admin/fragments/head
+            :: head('Không có quyền truy cập')
+        }">
+</head>
+
+<body class="admin-error-page">
+
+<div class="admin-error-wrapper">
+
+    <div class="admin-error-card">
+
+        <div class="admin-error-icon">
+            <i class="bi bi-shield-lock"></i>
+        </div>
+
+        <h1>
+            403
+        </h1>
+
+        <h2>
+            Không có quyền truy cập
+        </h2>
+
+        <p>
+            Tài khoản của bạn không có quyền truy cập
+            trang quản trị TripGo.
+        </p>
+
+        <a
+                th:href="@{/admin/login}"
+                class="btn admin-btn-primary">
+
+            Quay lại đăng nhập
+
+        </a>
+
+    </div>
+
+</div>
+
+</body>
+</html>

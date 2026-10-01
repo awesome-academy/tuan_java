@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html
+        lang="vi"
+        xmlns:th="http://www.thymeleaf.org">
+
+<head
+        th:replace="~{
+            admin/fragments/head
+            :: head('Quản lý Điểm đến')
+        }">
+</head>
+
+<body>
+
+<div
+        th:replace="~{
+            admin/fragments/sidebar
+            :: sidebar('destinations')
+        }">
+</div>
+
+<main class="admin-main">
+
+  <div
+          th:replace="~{
+                admin/fragments/topbar
+                :: topbar('Quản lý Điểm đến')
+            }">
+  </div>
+
+  <div class="admin-content">
+
+    <div
+            th:replace="~{
+                    admin/fragments/messages
+                    :: messages
+                }">
+    </div>
+
+    <div class="admin-toolbar">
+
+      <form
+              th:action="@{/admin/destinations}"
+              method="get"
+              class="admin-search">
+
+        <i class="bi bi-search"></i>
+
+        <input
+                type="text"
+                name="q"
+                th:value="${q}"
+                placeholder="Tìm điểm đến theo tên / slug...">
+
+      </form>
+
+      <a
+              th:href="@{/admin/destinations/new}"
+              class="btn admin-btn-primary">
+
+        <i class="bi bi-plus-lg"></i>
+
+        Thêm điểm đến
+
+      </a>
+
+    </div>
+
+    <div class="admin-table-wrapper">
+
+      <table class="admin-table">
+
+        <thead>
+        <tr>
+          <th>Ảnh</th>
+          <th>Tên điểm đến</th>
+          <th>Slug</th>
+          <th>Số tour</th>
+          <th>Thao tác</th>
+        </tr>
+        </thead>
+
+        <tbody>
+
+        <tr
+                th:each="destination
+                            : ${result.content}">
+
+          <td>
+
+            <img
+                    th:if="${
+                                    destination.imageUrl != null
+                                }"
+                    th:src="${destination.imageUrl}"
+                    class="destination-thumbnail"
+                    alt="Destination">
+
+            <span
+                    th:if="${
+                                    destination.imageUrl == null
+                                }"
+                    class="text-muted">
+
+                            Không có ảnh
+
+                        </span>
+
+          </td>
+
+          <td
+                  class="fw-semibold"
+                  th:text="${destination.name}">
+          </td>
+
+          <td>
+            <code
+                    th:text="${destination.slug}">
+            </code>
+          </td>
+
+          <td
+                  th:text="${
+                                destination.tourCount
+                                + ' tour'
+                            }">
+          </td>
+
+          <td>
+
+            <a
+                    th:href="@{
+                                    /admin/destinations/{id}/edit(
+                                        id=${destination.id}
+                                    )
+                                }"
+                    class="
+                                    btn
+                                    btn-sm
+                                    btn-outline-primary
+                                ">
+
+              Sửa
+
+            </a>
+
+            <form
+                    th:action="@{
+                                    /admin/destinations/{id}/delete(
+                                        id=${destination.id}
+                                    )
+                                }"
+                    method="post"
+                    class="d-inline">
+
+              <button
+                      type="submit"
+                      class="
+                                        btn
+                                        btn-sm
+                                        btn-outline-danger
+                                    "
+                      onclick="
+                                        return confirm(
+                                            'Bạn chắc chắn muốn xóa điểm đến này?'
+                                        )
+                                    ">
+
+                Xóa
+
+              </button>
+
+            </form>
+
+          </td>
+
+        </tr>
+
+        <tr th:if="${result.empty}">
+          <td
+                  colspan="5"
+                  class="
+                                text-center
+                                text-muted
+                                py-5
+                            ">
+
+            Không tìm thấy điểm đến.
+
+          </td>
+        </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+</main>
+
+</body>
+</html>

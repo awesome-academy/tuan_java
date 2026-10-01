@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html
+        lang="vi"
+        xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{admin/fragments/head :: head('Thêm / Sửa Tour')}">
+</head>
+
+<body>
+
+<div
+        th:replace="~{admin/fragments/sidebar :: sidebar('tours')}">
+</div>
+
+<main class="admin-main">
+
+    <div
+            th:replace="~{admin/fragments/topbar :: topbar(${mode == 'create' ? 'Thêm Tour' : 'Sửa Tour'})}">
+    </div>
+
+    <div class="admin-content">
+
+        <form
+                class="admin-form"
+                th:object="${form}"
+                th:action="${mode == 'create'}
+                    ? @{/admin/tours}
+                    : @{/admin/tours/{id}(id=${tourId})}"
+                method="post">
+
+            <div class="admin-form-section">
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Tên tour
+                    </label>
+
+                    <input
+                            type="text"
+                            class="form-control"
+                            th:classappend="${#fields.hasErrors('title')} ? ' is-invalid'"
+                            th:field="*{title}">
+
+                    <div
+                            class="invalid-feedback"
+                            th:errors="*{title}">
+                    </div>
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Slug
+                    </label>
+
+                    <input
+                            type="text"
+                            class="form-control"
+                            th:field="*{slug}">
+
+                </div>
+
+                <div class="row g-3 mb-3">
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+                            Điểm đến
+                        </label>
+
+                        <select
+                                class="form-select"
+                                th:field="*{destinationId}">
+
+                            <option value="">
+                                Chọn điểm đến
+                            </option>
+
+                            <option
+                                    th:each="destination : ${destinations}"
+                                    th:value="${destination.id}"
+                                    th:text="${destination.name}">
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+                            Loại hình
+                        </label>
+
+                        <select
+                                class="form-select"
+                                th:field="*{categoryId}">
+
+                            <option value="">
+                                Chọn loại hình
+                            </option>
+
+                            <option
+                                    th:each="category : ${categories}"
+                                    th:value="${category.id}"
+                                    th:text="${category.name}">
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+                <div class="row g-3 mb-3">
+
+                    <div class="col-md-4">
+
+                        <label class="form-label">
+                            Giá (VND)
+                        </label>
+
+                        <input
+                                type="number"
+                                class="form-control"
+                                th:field="*{price}">
+
+                    </div>
+
+                    <div class="col-md-4">
+
+                        <label class="form-label">
+                            Giá khuyến mại
+                        </label>
+
+                        <input
+                                type="number"
+                                class="form-control"
+                                th:classappend="${#fields.hasErrors('discountPrice')} ? ' is-invalid'"
+                                th:field="*{discountPrice}">
+
+                        <div
+                                class="invalid-feedback"
+                                th:errors="*{discountPrice}">
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-4">
+
+                        <label class="form-label">
+                            Thời lượng (ngày)
+                        </label>
+
+                        <input
+                                type="number"
+                                class="form-control"
+                                th:field="*{durationDays}">
+
+                    </div>
+
+                </div>
+
+                <div class="row g-3 mb-3">
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+                            Số khách tối đa
+                        </label>
+
+                        <input
+                                type="number"
+                                class="form-control"
+                                th:field="*{maxGroupSize}">
+
+                    </div>
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+                            Thumbnail
+                        </label>
+
+                        <input
+                                type="text"
+                                class="form-control"
+                                th:field="*{thumbnail}"
+                                placeholder="https://...">
+
+                    </div>
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Mô tả
+                    </label>
+
+                    <textarea
+                            class="form-control"
+                            rows="5"
+                            th:field="*{description}">
+                    </textarea>
+
+                </div>
+
+                <div class="form-check mb-4">
+
+                    <input
+                            id="featured"
+                            type="checkbox"
+                            class="form-check-input"
+                            th:field="*{featured}">
+
+                    <label
+                            class="form-check-label"
+                            for="featured">
+                        Tour nổi bật
+                    </label>
+
+                </div>
+
+            </div>
+
+            <!-- Itinerary -->
+
+            <div class="admin-form-section">
+
+                <div class="d-flex justify-content-between align-items-center mb-3">
+
+                    <div>
+                        <h5 class="mb-1">
+                            Lịch trình theo ngày
+                        </h5>
+
+                        <div class="text-muted small">
+                            Thêm hoặc xóa các ngày trong lịch trình tour.
+                        </div>
+                    </div>
+
+                    <button
+                            type="button"
+                            id="add-itinerary-btn"
+                            class="btn admin-btn-primary">
+
+                        <i class="bi bi-plus-lg"></i>
+
+                        Thêm ngày
+
+                    </button>
+
+                </div>
+
+                <div id="itinerary-container">
+
+                    <div
+                            class="itinerary-row"
+                            th:each="item, stat : *{itineraries}"
+                            th:data-index="${stat.index}">
+
+                        <div class="itinerary-row-header">
+
+                            <strong>
+                                Ngày
+                                <span th:text="${stat.index + 1}">
+                        1
+                    </span>
+                            </strong>
+
+                            <button
+                                    type="button"
+                                    class="btn btn-sm admin-btn-delete remove-itinerary-btn">
+
+                                <i class="bi bi-trash"></i>
+
+                                Xóa
+
+                            </button>
+
+                        </div>
+
+                        <div class="row g-3">
+
+                            <div class="col-md-2">
+
+                                <label class="form-label">
+                                    Ngày
+                                </label>
+
+                                <input
+                                        type="number"
+                                        readonly
+                                        data-field="dayNumber"
+                                        class="form-control"
+                                        th:field="*{itineraries[__${stat.index}__].dayNumber}">
+
+                                <div
+                                        class="text-danger small mt-1"
+                                        th:errors="*{itineraries[__${stat.index}__].dayNumber}">
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-4">
+
+                                <label class="form-label">
+                                    Tiêu đề
+                                </label>
+
+                                <input
+                                        type="text"
+                                        data-field="title"
+                                        class="form-control"
+                                        th:field="*{itineraries[__${stat.index}__].title}">
+
+                                <div
+                                        class="text-danger small mt-1"
+                                        th:errors="*{itineraries[__${stat.index}__].title}">
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-6">
+
+                                <label class="form-label">
+                                    Mô tả
+                                </label>
+
+                                <input
+                                        type="text"
+                                        data-field="description"
+                                        class="form-control"
+                                        th:field="*{itineraries[__${stat.index}__].description}">
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <template id="itinerary-row-template">
+
+                    <div class="itinerary-row">
+
+                        <div class="itinerary-row-header">
+
+                            <strong class="itinerary-title">
+                                Ngày
+                            </strong>
+
+                            <button
+                                    type="button"
+                                    class="btn btn-sm admin-btn-delete remove-itinerary-btn">
+
+                                <i class="bi bi-trash"></i>
+
+                                Xóa
+
+                            </button>
+
+                        </div>
+
+                        <div class="row g-3">
+
+                            <div class="col-md-2">
+
+                                <label class="form-label">
+                                    Ngày
+                                </label>
+
+                                <input
+                                        type="number"
+                                        min="1"
+                                        class="form-control itinerary-day-number"
+                                        data-field="dayNumber">
+
+                            </div>
+
+                            <div class="col-md-4">
+
+                                <label class="form-label">
+                                    Tiêu đề
+                                </label>
+
+                                <input
+                                        type="text"
+                                        class="form-control"
+                                        data-field="title"
+                                        placeholder="Khởi hành và tham quan...">
+
+                            </div>
+
+                            <div class="col-md-6">
+
+                                <label class="form-label">
+                                    Mô tả
+                                </label>
+
+                                <input
+                                        type="text"
+                                        class="form-control"
+                                        data-field="description"
+                                        placeholder="Chi tiết hoạt động trong ngày...">
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </template>
+
+            </div>
+
+            <div class="admin-form-actions">
+
+                <button
+                        type="submit"
+                        class="btn admin-btn-primary px-4">
+                    Lưu tour
+                </button>
+
+                <a
+                        th:href="@{/admin/tours}"
+                        class="btn admin-btn-secondary px-4">
+                    Hủy
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</main>
+
+<script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js">
+</script>
+
+<script th:src="@{/admin/js/admin.js}"></script>
+
+</body>
+</html>

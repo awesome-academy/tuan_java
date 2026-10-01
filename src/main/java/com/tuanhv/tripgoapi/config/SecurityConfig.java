@@ -5,6 +5,7 @@ import com.tuanhv.tripgoapi.security.RestAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
@@ -57,8 +58,10 @@ public class SecurityConfig {
     }
 
     @Bean
+    @Order(1)
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .securityMatcher("/api/**")
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session ->
                     session.sessionCreationPolicy(
@@ -118,6 +121,56 @@ public class SecurityConfig {
                                 .accessDeniedHandler(
                                         restAccessDeniedHandler
                                 )
+                );
+
+        return http.build();
+    }
+
+    @Bean
+    @Order(2)
+    SecurityFilterChain adminSecurityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .securityMatcher(
+                        "/admin/**",
+                        "/css/**",
+                        "/js/**",
+                        "/images/**"
+                )
+
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(
+                                "/admin/login",
+                                "/admin/access-denied",
+                                "/admin/css/**",
+                                "/admin/js/**"
+                        ).permitAll()
+
+                        .requestMatchers("/admin/**")
+                        .hasRole("ADMIN")
+
+                        .anyRequest().permitAll()
+                )
+
+                .formLogin(form -> form
+                        .loginPage("/admin/login")
+                        .loginProcessingUrl("/admin/login")
+                        .usernameParameter("email")
+                        .passwordParameter("password")
+                        .defaultSuccessUrl("/admin", true)
+                        .failureUrl("/admin/login?error")
+                        .permitAll()
+                )
+
+                .logout(logout -> logout
+                        .logoutUrl("/admin/logout")
+                        .logoutSuccessUrl("/admin/login?logout")
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
+                        .permitAll()
+                )
+
+                .exceptionHandling(ex -> ex
+                        .accessDeniedPage("/admin/access-denied")
                 );
 
         return http.build();

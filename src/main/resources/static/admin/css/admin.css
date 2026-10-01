@@ -1,0 +1,839 @@
+:root {
+    --admin-primary: #0797b5;
+    --admin-primary-dark: #057f99;
+
+    --admin-sidebar: #073f4b;
+    --admin-sidebar-hover: #095566;
+
+    --admin-heading: #102b47;
+
+    --admin-border: #aec2d2;
+    --admin-border-light: #dfe7ed;
+
+    --admin-bg: #f5f8fa;
+    --admin-row-alt: #f3f7f9;
+
+    --admin-text: #24384c;
+    --admin-muted: #708497;
+
+    --admin-danger: #ef4444;
+    --admin-warning: #d97706;
+}
+
+
+/* =========================================================
+   Global
+   ========================================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    min-height: 100%;
+}
+
+body {
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+    background: var(--admin-bg);
+    color: var(--admin-text);
+}
+
+a {
+    text-decoration: none;
+}
+
+
+/* =========================================================
+   Login
+   ========================================================= */
+
+.admin-login-page {
+    min-height: 100vh;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #eef3f7;
+}
+
+.admin-login-wrapper {
+    width: 100%;
+    max-width: 430px;
+
+    padding: 24px;
+}
+
+.admin-login-card {
+    background: white;
+
+    border: 1px solid #9fb6c9;
+
+    border-radius: 8px;
+
+    padding: 32px;
+
+    box-shadow:
+        0 4px 20px
+        rgba(15, 45, 70, 0.08);
+}
+
+.admin-login-title {
+    margin-bottom: 28px;
+
+    text-align: center;
+
+    color: var(--admin-primary);
+
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.admin-login-note {
+    margin-top: 20px;
+
+    text-align: center;
+
+    color: #8496a7;
+
+    font-size: 13px;
+}
+
+.admin-input {
+    min-height: 44px;
+
+    border-color: #9fb6c9;
+
+    background: #f6f9fb;
+}
+
+
+/* =========================================================
+   Sidebar
+   ========================================================= */
+
+.admin-sidebar {
+    position: fixed;
+
+    top: 0;
+    left: 0;
+    bottom: 0;
+
+    width: 230px;
+
+    padding: 24px 14px;
+
+    background: var(--admin-sidebar);
+
+    z-index: 100;
+}
+
+.admin-brand {
+    padding: 0 12px;
+    margin-bottom: 28px;
+
+    color: white;
+
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.admin-nav {
+    display: flex;
+    flex-direction: column;
+
+    gap: 6px;
+}
+
+.admin-nav-link {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 11px 14px;
+
+    border: 0;
+    border-radius: 7px;
+
+    background: transparent;
+
+    color: #b5cad1;
+
+    font-size: 14px;
+
+    text-align: left;
+
+    transition: 0.15s ease;
+}
+
+.admin-nav-link:hover {
+    background: var(--admin-sidebar-hover);
+    color: white;
+}
+
+.admin-nav-link.active {
+    background: var(--admin-primary);
+    color: white;
+    font-weight: 600;
+}
+
+.admin-nav-button {
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   Main
+   ========================================================= */
+
+.admin-main {
+    min-height: 100vh;
+
+    margin-left: 230px;
+
+    background: white;
+}
+
+.admin-content {
+    padding: 22px 24px 40px;
+}
+
+
+/* =========================================================
+   Topbar
+   ========================================================= */
+
+.admin-topbar {
+    height: 68px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 24px;
+
+    border-bottom: 1px solid var(--admin-border);
+
+    background: white;
+}
+
+.admin-page-title {
+    margin: 0;
+
+    color: var(--admin-heading);
+
+    font-size: 21px;
+    font-weight: 700;
+}
+
+.admin-user {
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+}
+
+.admin-user-info {
+    display: flex;
+    align-items: center;
+
+    gap: 4px;
+
+    color: var(--admin-muted);
+
+    font-size: 13px;
+}
+
+.admin-avatar {
+    width: 34px;
+    height: 34px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #e2edf4;
+
+    color: #7892a6;
+}
+
+
+/* =========================================================
+   Buttons
+   ========================================================= */
+
+.admin-btn-primary {
+    border: 1px solid var(--admin-primary);
+
+    background: var(--admin-primary);
+    color: white;
+
+    font-weight: 600;
+}
+
+.admin-btn-primary:hover {
+    border-color: var(--admin-primary-dark);
+
+    background: var(--admin-primary-dark);
+    color: white;
+}
+
+.admin-btn-secondary {
+    border: 1px solid #9db4c5;
+
+    background: white;
+    color: #5a7082;
+}
+
+.admin-btn-edit {
+    padding: 4px 10px;
+
+    border: 1px solid #6aa6c0;
+
+    background: white;
+    color: #167c9e;
+
+    font-size: 12px;
+}
+
+.admin-btn-delete {
+    padding: 4px 10px;
+
+    border: 1px solid #ef4444;
+
+    background: white;
+    color: #ef4444;
+
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   Toolbar / search
+   ========================================================= */
+
+.admin-toolbar {
+    display: flex;
+
+    gap: 14px;
+
+    align-items: center;
+
+    margin-bottom: 16px;
+}
+
+.admin-search {
+    flex: 1;
+
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 0 12px;
+
+    border: 1px solid var(--admin-border);
+
+    border-radius: 7px;
+
+    background: white;
+}
+
+.admin-search i {
+    color: #748b9d;
+}
+
+.admin-search input {
+    width: 100%;
+
+    border: 0;
+    outline: 0;
+
+    color: var(--admin-text);
+
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   Table
+   ========================================================= */
+
+.admin-table-wrapper {
+    overflow-x: auto;
+
+    border-radius: 6px;
+
+    background: white;
+}
+
+.admin-table {
+    width: 100%;
+
+    border-collapse: collapse;
+
+    font-size: 13px;
+}
+
+.admin-table thead {
+    background: #102d49;
+    color: white;
+}
+
+.admin-table th {
+    padding: 13px 14px;
+
+    text-align: left;
+
+    font-weight: 600;
+}
+
+.admin-table td {
+    padding: 14px;
+
+    border-bottom: 1px solid #e2e9ef;
+
+    vertical-align: middle;
+}
+
+.admin-table tbody tr:nth-child(odd) {
+    background: #f5f8fa;
+}
+
+.admin-table tbody tr:nth-child(even) {
+    background: white;
+}
+
+.admin-table tbody tr:hover {
+    background: #edf4f7;
+}
+
+.admin-price {
+    color: var(--admin-primary);
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   Pagination
+   ========================================================= */
+
+.admin-pagination {
+    display: flex;
+
+    gap: 8px;
+
+    margin-top: 16px;
+}
+
+.admin-pagination a {
+    min-width: 34px;
+    height: 34px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid #94aec0;
+
+    border-radius: 7px;
+
+    background: white;
+
+    color: #324e64;
+
+    font-size: 13px;
+}
+
+.admin-pagination a.active {
+    border-color: var(--admin-primary);
+
+    background: var(--admin-primary);
+
+    color: white;
+}
+
+
+/* =========================================================
+   Forms
+   ========================================================= */
+
+.admin-form {
+    max-width: 100%;
+}
+
+.admin-form-section {
+    padding-bottom: 20px;
+}
+
+.admin-form label {
+    color: #19344c;
+
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.admin-form .form-control,
+.admin-form .form-select {
+    min-height: 42px;
+
+    border-color: #a6bccd;
+
+    background-color: #f7fafc;
+}
+
+.admin-form textarea.form-control {
+    min-height: 110px;
+}
+
+.admin-form-actions {
+    display: flex;
+
+    gap: 12px;
+
+    margin-top: 10px;
+}
+
+.itinerary-row {
+    margin-bottom: 14px;
+
+    padding: 14px;
+
+    border: 1px solid #d9e3ea;
+
+    border-radius: 7px;
+
+    background: #f8fafb;
+}
+
+
+/* =========================================================
+   Dashboard
+   ========================================================= */
+
+.dashboard-card {
+    min-height: 110px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 16px;
+
+    padding: 20px;
+
+    border: 1px solid #dde6ec;
+
+    border-radius: 8px;
+
+    background: white;
+
+    box-shadow:
+        0 3px 12px
+        rgba(17, 45, 70, 0.05);
+}
+
+.dashboard-card-icon {
+    width: 48px;
+    height: 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 8px;
+
+    background: #dff3f7;
+
+    color: var(--admin-primary);
+
+    font-size: 22px;
+}
+
+.dashboard-card-label {
+    color: var(--admin-muted);
+
+    font-size: 13px;
+}
+
+.dashboard-card-value {
+    margin-top: 4px;
+
+    color: var(--admin-heading);
+
+    font-size: 25px;
+    font-weight: 700;
+}
+
+.dashboard-money {
+    font-size: 19px;
+}
+
+
+/* =========================================================
+   Booking filters
+   ========================================================= */
+
+.booking-filter-tabs {
+    display: flex;
+
+    gap: 10px;
+
+    margin-bottom: 16px;
+}
+
+.booking-filter-tab {
+    min-width: 145px;
+
+    padding: 9px 16px;
+
+    border: 1px solid #8da8bb;
+
+    border-radius: 7px;
+
+    background: white;
+
+    color: #2f4c63;
+
+    text-align: center;
+
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.booking-filter-tab.active {
+    border-color: var(--admin-primary);
+
+    background: var(--admin-primary);
+
+    color: white;
+}
+
+
+/* =========================================================
+   Booking status
+   ========================================================= */
+
+.booking-status,
+.booking-status-select {
+    min-width: 118px;
+
+    display: inline-block;
+
+    padding: 7px 12px;
+
+    border-radius: 7px;
+
+    background: white;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    text-align: center;
+}
+
+.booking-status-select {
+    cursor: pointer;
+    outline: none;
+}
+
+.status-pending {
+    border: 1px solid #d97706;
+    color: #d97706;
+}
+
+.status-confirmed {
+    border: 1px solid var(--admin-primary);
+    color: var(--admin-primary);
+}
+
+.status-cancelled {
+    border: 1px solid var(--admin-danger);
+    color: var(--admin-danger);
+}
+
+
+/* =========================================================
+   Destination
+   ========================================================= */
+
+.destination-thumb {
+    width: 70px;
+    height: 44px;
+
+    object-fit: cover;
+
+    border-radius: 5px;
+}
+
+
+/* =========================================================
+   Responsive
+   ========================================================= */
+
+@media (max-width: 991px) {
+
+    .admin-sidebar {
+        width: 190px;
+    }
+
+    .admin-main {
+        margin-left: 190px;
+    }
+
+    .booking-filter-tabs {
+        flex-wrap: wrap;
+    }
+
+}
+
+
+@media (max-width: 767px) {
+
+    .admin-sidebar {
+        position: static;
+
+        width: 100%;
+        min-height: auto;
+    }
+
+    .admin-main {
+        margin-left: 0;
+    }
+
+    .admin-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .admin-topbar {
+        padding: 0 16px;
+    }
+
+    .admin-content {
+        padding: 16px;
+    }
+
+}
+
+.itinerary-row {
+    margin-bottom: 16px;
+    padding: 16px;
+
+    border: 1px solid var(--admin-border-light);
+    border-radius: 8px;
+
+    background: #f8fafb;
+}
+
+.itinerary-row-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 12px;
+}
+
+.itinerary-title {
+    color: var(--admin-heading);
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.remove-itinerary-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* =========================================================
+   Error page
+   ========================================================= */
+
+.admin-error-page {
+    min-height: 100vh;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #eef3f7;
+}
+
+.admin-error-wrapper {
+    width: 100%;
+    max-width: 500px;
+
+    padding: 24px;
+}
+
+.admin-error-card {
+    padding: 48px 36px;
+
+    border: 1px solid var(--admin-border);
+    border-radius: 10px;
+
+    background: white;
+
+    text-align: center;
+
+    box-shadow:
+        0 4px 20px
+        rgba(15, 45, 70, 0.08);
+}
+
+.admin-error-icon {
+    width: 64px;
+    height: 64px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin: 0 auto 20px;
+
+    border-radius: 50%;
+
+    background: #feecec;
+    color: #dc3545;
+
+    font-size: 28px;
+}
+
+.admin-error-card h1 {
+    margin: 0;
+
+    color: var(--admin-heading);
+
+    font-size: 48px;
+    font-weight: 700;
+}
+
+.admin-error-card h2 {
+    margin: 8px 0 12px;
+
+    color: var(--admin-heading);
+
+    font-size: 22px;
+}
+
+.admin-error-card p {
+    margin-bottom: 24px;
+
+    color: var(--admin-muted);
+}

@@ -2,6 +2,7 @@ package com.tuanhv.tripgoapi.repository;
 
 import com.tuanhv.tripgoapi.entity.Tour;
 import com.tuanhv.tripgoapi.entity.TourItinerary;
+import com.tuanhv.tripgoapi.repository.projection.DestinationTourCountProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -11,6 +12,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,5 +53,32 @@ public interface TourRepository extends JpaRepository<Tour, Long>, JpaSpecificat
     """)
     List<TourItinerary> findItineraryByTourId(@Param("tourId") Long tourId);
 
+    @EntityGraph(
+            attributePaths = {
+                    "destination",
+                    "category"
+            }
+    )
+    @Query("""
+        SELECT t
+        FROM Tour t
+        WHERE t.id = :id
+    """)
+    Optional<Tour> findByIdWithAdminDetails(@Param("id") Long id);
+
+    boolean existsBySlugAndIdNot(String slug, Long id);
+
+    @Query("""
+        SELECT t.destination.id AS destinationId,
+               COUNT(t.id) AS tourCount
+        FROM Tour t
+        WHERE t.destination.id IN :destinationIds
+        GROUP BY t.destination.id
+    """)
+    List<DestinationTourCountProjection> countByDestinationIds(
+            @Param("destinationIds") Collection<Long> destinationIds
+    );
+
+    boolean existsByDestination_Id(Long destinationId);
 
 }
