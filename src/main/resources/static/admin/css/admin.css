@@ -760,3 +760,80 @@ a {
     align-items: center;
     gap: 5px;
 }
+
+/* =========================================================
+   Error page
+   ========================================================= */
+
+.admin-error-page {
+    min-height: 100vh;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #eef3f7;
+}
+
+.admin-error-wrapper {
+    width: 100%;
+    max-width: 500px;
+
+    padding: 24px;
+}
+
+.admin-error-card {
+    padding: 48px 36px;
+
+    border: 1px solid var(--admin-border);
+    border-radius: 10px;
+
+    background: white;
+
+    text-align: center;
+
+    box-shadow:
+        0 4px 20px
+        rgba(15, 45, 70, 0.08);
+}
+
+.admin-error-icon {
+    width: 64px;
+    height: 64px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin: 0 auto 20px;
+
+    border-radius: 50%;
+
+    background: #feecec;
+    color: #dc3545;
+
+    font-size: 28px;
+}
+
+.admin-error-card h1 {
+    margin: 0;
+
+    color: var(--admin-heading);
+
+    font-size: 48px;
+    font-weight: 700;
+}
+
+.admin-error-card h2 {
+    margin: 8px 0 12px;
+
+    color: var(--admin-heading);
+
+    font-size: 22px;
+}
+
+.admin-error-card p {
+    margin-bottom: 24px;
+
+    color: var(--admin-muted);
+}

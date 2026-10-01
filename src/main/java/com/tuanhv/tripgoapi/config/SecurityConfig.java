@@ -140,6 +140,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/admin/login",
+                                "/admin/access-denied",
                                 "/admin/css/**",
                                 "/admin/js/**"
                         ).permitAll()

@@ -6,13 +6,11 @@ import com.tuanhv.tripgoapi.dto.admin.AdminTourFormOptions;
 import com.tuanhv.tripgoapi.entity.*;
 import com.tuanhv.tripgoapi.exception.ConflictException;
 import com.tuanhv.tripgoapi.exception.ResourceNotFoundException;
-import com.tuanhv.tripgoapi.repository.BookingRepository;
-import com.tuanhv.tripgoapi.repository.CategoryRepository;
-import com.tuanhv.tripgoapi.repository.DestinationRepository;
-import com.tuanhv.tripgoapi.repository.TourRepository;
+import com.tuanhv.tripgoapi.repository.*;
 import com.tuanhv.tripgoapi.service.admin.AdminTourService;
 import com.tuanhv.tripgoapi.specification.TourSpecification;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -33,7 +31,8 @@ import java.util.stream.Collectors;
 public class AdminTourServiceImpl implements AdminTourService {
 
     private final TourRepository tourRepository;
-    private final BookingRepository bookingRepository;
+    private final TourDepartureRepository tourDepartureRepository;
+    private final ReviewRepository reviewRepository;
     private final DestinationRepository destinationRepository;
     private final CategoryRepository categoryRepository;
 
@@ -264,14 +263,29 @@ public class AdminTourServiceImpl implements AdminTourService {
                         )
                 );
 
-        if (bookingRepository.existsByTourId(id)) {
+        if (tourDepartureRepository.existsByTour_Id(id)) {
             throw new ConflictException(
-                    "TOUR_HAS_BOOKINGS",
-                    "Không thể xóa tour đã có đơn đặt"
+                    "TOUR_IN_USE",
+                    "Không thể xóa tour đã có lịch khởi hành"
             );
         }
 
-        tourRepository.delete(tour);
+        if (reviewRepository.existsByTour_Id(id)) {
+            throw new ConflictException(
+                    "TOUR_IN_USE",
+                    "Không thể xóa tour đã có đánh giá"
+            );
+        }
+
+        try {
+            tourRepository.delete(tour);
+            tourRepository.flush();
+        } catch (DataIntegrityViolationException ex) {
+            throw new ConflictException(
+                    "TOUR_IN_USE",
+                    "Không thể xóa tour đang có dữ liệu liên quan"
+            );
+        }
     }
 
     private BigDecimal normalizeDiscountPrice(BigDecimal value) {
